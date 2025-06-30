@@ -2,12 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import plotly.express as px
+import nltk
 from wordcloud import WordCloud
 from nltk import ngrams
 from nltk.tokenize import word_tokenize
 from collections import Counter
 from dash import dcc
 import re
+
+nltk.download("punkt_tab")
 
 
 def get_ngram_freq(df, feature, n_list, sort_by_values=True):

@@ -1,5 +1,4 @@
 from dash import dcc
-import plotly.graph_objects as go
 import plotly.express as px
 from utils.config import CUSTOM_COLORS
 from utils.helper import adjusted_rgba
@@ -21,14 +20,15 @@ def create_treemap(df):
     )
     # Median for the whole world
     total_median = dff["salary"].median()
-    colors_order = [2, 1, 3, 4, 5, 0]
+    colors_order = [5, 2, 1, 0, 4, 3]
     colors = [CUSTOM_COLORS[i] for i in colors_order]
+
     fig = px.treemap(
         salary_median_df,
         path=[px.Constant("World"), "company_location_continent", "company_location"],
         values="salary",
         color="company_location_continent",
-        color_discrete_sequence=colors + ["rgba(205, 205, 209, 0.5)"],
+        color_discrete_sequence=["rgba(240, 240, 240, 0.8)"] + colors,
         title="Median Salary Treemap by Continents and Countries",
         custom_data=["company_location_name", "salary", "company_location_continent"],
     )
@@ -50,17 +50,20 @@ def create_treemap(df):
     # Update the hoverinfo for continents and world
     continent_hovercustomdata = [["", v, k] for k, v in continent_medians.items()]
     continent_hovercustomdata.append(["", total_median, ""])
-    fig.data[0].customdata[-7:] = continent_hovercustomdata
 
-    # Adjust the color for children node
-    orig_colors = fig.data[0]["marker"]["colors"]
     new_colors = []
-    for i in range(len(orig_colors) - 7):
-        color = orig_colors[i]
-        new_colors.append(adjusted_rgba(color, 0.4))
-    new_colors.extend(orig_colors[-7:])
-    fig.data[0]["marker"]["colors"] = new_colors
+    new_colors.append(fig.data[0]["marker"]["colors"][0])
+    count = 0
+    for i, customdata in enumerate(fig.data[0].customdata[1:]):
+        if customdata[0] == "(?)":
+            fig.data[0].customdata[i + 1] = continent_hovercustomdata[count]
+            count += 1
+            new_colors.append(fig.data[0]["marker"]["colors"][i + 1])
+        else:
+            new_color = adjusted_rgba(fig.data[0]["marker"]["colors"][i + 1])
+            new_colors.append(new_color)
 
+    fig.data[0]["marker"]["colors"] = new_colors
     fig.update_layout(title_x=0.5, title_font_size=18, margin=dict(t=50, b=10))
 
     # Return the figure
