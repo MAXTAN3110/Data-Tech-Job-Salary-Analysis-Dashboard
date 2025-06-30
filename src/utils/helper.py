@@ -91,10 +91,7 @@ def generate_wordcloud_div(wordcloud_exclusions, input_df, id):
         background_color="#F9F9FA",
         collocations=True,
         regexp=r"[a-zA-z#&]+",
-        # max_words=30,
         min_word_length=4,
-        # font_path='storage/fonts/Arial-Unicode.ttf',
-        # collocation_threshold=3,
         colormap=truncate_cmap(plt.get_cmap("ocean"), 0, 0.7),
         random_state=0,
     )
