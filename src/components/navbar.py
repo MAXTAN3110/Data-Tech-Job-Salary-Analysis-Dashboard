@@ -41,7 +41,7 @@ def create_navbar():
                 )
             ),
         ],
-        brand="Max Tan U2120371L",
+        brand="Max Tan",
         brand_href="/",
         color="#41C9EA",
         dark=True,
