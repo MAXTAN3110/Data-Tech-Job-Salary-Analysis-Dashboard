@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from dash import html
 from dash.dependencies import Input, Output, State
@@ -13,14 +14,17 @@ def register_server_callbacks(app):
     )
     def get_data(pathname, data):
         if data is None:
-            df = pd.read_csv("processed_data.csv")
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            root_dir = os.path.dirname(os.path.dirname(current_dir))
+            file_path = os.path.join(root_dir, "processed_data.csv")
+            df = pd.read_csv(file_path)
             return df.to_dict("records")
         return data
 
     @app.callback(Output("wordcloud_div", "children"), Input("store", "data"))
     def update_wordcloud(data):
         df = pd.DataFrame(data)
-        
+
         return html.Div(
             create_wordcloud(["Data", "Engineer", "Scientist", "of"], df, "1")
         )
